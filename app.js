@@ -12,8 +12,27 @@ app.get('/todos', (req, res) => {
   res.status(200).json(todos); // Send array as JSON
 });
 
+
+//============ASSIGNMENT============
+
+//GET Active todos
+app.get("/todos/active", (req, res) => {
+  const active = todos.filter((todo) => todo.completed === false);
+  res.status(200).json({ active });
+});
+
+// GET by Id
+app.get('/todos/:id', (req, res) => {
+  const todo = todos.find((t) => t.id === parseInt(req.params.id));
+  if (!todo) return res.status(404).json({ message: 'Todo not found' });
+  res.status(200).json(todo); // Send single item
+});
+
+
+
 // POST New – Create
 app.post('/todos', (req, res) => {
+  if (!req.body.task || !req.body.completed) return res.status(400).json({ error: "All fields must be given" });
   const newTodo = { id: todos.length + 1, ...req.body }; // Auto-ID
   todos.push(newTodo);
   res.status(201).json(newTodo); // Echo back
@@ -37,8 +56,8 @@ app.delete('/todos/:id', (req, res) => {
   res.status(204).send(); // Silent success
 });
 
-app.get('/todos/completed', (req, res) => {
-  const completed = todos.filter((t) => t.completed);
+app.get('/todo/completed', (req, res) => {
+  const completed = todos.filter((t) => t.completed === true);
   res.json(completed); // Custom Read!
 });
 
